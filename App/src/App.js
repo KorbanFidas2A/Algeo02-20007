@@ -1,6 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import  Form from 'react-bootstrap/Form';
+import Image from 'react-bootstrap/Image';
+import Button from 'react-bootstrap/Button'
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
@@ -10,21 +14,15 @@ function App() {
   }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Selamat datang!
-        </p>
-        <a
-          className="App-link"
-          href="https://github.com/KorbanFidas2A/Algeo02-20007.git"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Image Compression menggunakan SVD
-        </a>
-        <p>The current time is {currentTime}.</p>
-      </header>
+    
+  <Form.Group controlId="formFile" className="mb-3">
+    <Form.Label>Input gambar yang akan dikompresi disini</Form.Label>
+    <Form.Control type="file" />
+  </Form.Group>
+  <Form.Control size="sm" type="text" placeholder="Persentase kompresi gambar" />
+  <Image src="../assets/placeholder.png" fluid />
+
+      <Button variant="outline-primary">Download</Button>{' '}
     </div>
   );
 }
