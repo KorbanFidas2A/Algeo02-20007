@@ -1,15 +1,16 @@
 <html>
 <head>
-<title>Kompresi Foto menggunakan SVD</title>
+<title>Kompresi Foto Menggunakan SVD</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />        
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
 <body>
-<p><h1 align="center">Kompresi Foto menggunakan SVD</h1></p>
+<p><h1 align="center">Kompresi Foto Menggunakan SVD</h1></p>
 <div class="container">
 <div class="row">
+    <br>
     <h2>Pilih file yang ingin di-upload</h2>
-    <h3>file anda akan secara otomatis terkompresi, anda akan di-direct ke tab berisi foto yang sudah dikompresi.</h3>
+    <h5>Perhatian: file anda akan secara otomatis terkompresi, anda akan di-direct ke tab berisi foto yang sudah dikompresi.</h5>
     <p>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -21,6 +22,7 @@
           {% endif %}
         {% endwith %}
     </p>
+    <br>
     {% if filename %}
         <div>
             <img src="{{ url_for('display_image', filename=filename) }}">
@@ -29,6 +31,9 @@
     <form method="post" action="/" enctype="multipart/form-data">
         <dl>
             <p>
+                <label for="const">Masukkan konstanta:</label>
+                <input type="number" id="const" name="cons" min="0">
+                <br>
                 <input type="file" name="file" class="form-control" autocomplete="off" required>
             </p>
         </dl>
