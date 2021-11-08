@@ -29,7 +29,7 @@ def upload_image():
     if file.filename == '':
         flash('Tidak ada foto yang Anda pilih.')
         return redirect(request.url)
-    if constant == 0:
+    if constant <= 0:
         flash('Masukkan angka yang benar, yaitu lebih dari 0.')
         return redirect(request.url)
     if file and allowed_file(file.filename):
