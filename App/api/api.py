@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_folder="../build", static_url_path='/')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-UPLOAD_FOLDER = '../uploads'
+UPLOAD_FOLDER = './uploads'
 
 def allowed_file(filename):
     return '.' in filename and \
