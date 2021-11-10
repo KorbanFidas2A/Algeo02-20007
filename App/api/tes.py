@@ -62,6 +62,11 @@ def svd(A, k=None, epsilon=1e-10):
     return singular_values, us.T, vs
 
 
-img = cv2.imread("wkwkwk.JPG")
+img = Image.open("wkwkw.JPG")
 np_img = np.array(img)
-cv2.imwrite("opncv_sample.JPG", img)
+print(np_img.shape)
+#s, u, v = svd(np_img)
+#u2, s2, v2 = np.linalg.svd(np_img, full_matrices=False)
+#print(u)
+#print(u2)
+# cv2.imwrite("opncv_sample.JPG", img)
