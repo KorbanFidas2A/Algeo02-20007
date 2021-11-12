@@ -32,6 +32,6 @@
 
 
 ## Contributors
-- Nadia Mareta Putri Leiden | 13520007 | K01
-- Taufan Fajarama Putrawansyah R | 13520031 | K01
-- Raden Haryosatyo Wisjnunandono | 13520070 | K02
+- [Nadia Mareta Putri Leiden | 13520007 | K01](https://github.com/KorbanFidas2A)
+- [Taufan Fajarama Putrawansyah R | 13520031 | K01](https://github.com/roastland)
+- [Raden Haryosatyo Wisjnunandono | 13520070 | K02](https://github.com/nandono206)
