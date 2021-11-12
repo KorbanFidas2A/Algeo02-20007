@@ -3,8 +3,8 @@ import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import  Form from 'react-bootstrap/Form';
-import Image from 'react-bootstrap/Image';
-import Button from 'react-bootstrap/Button'
+import Button from 'react-bootstrap/Button';
+import Main from './components/Main';
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
@@ -20,8 +20,7 @@ function App() {
     <Form.Control type="file" />
   </Form.Group>
   <Form.Control size="sm" type="text" placeholder="Persentase kompresi gambar" />
-  <Image src="../assets/placeholder.png" fluid />
-
+  <Main />
       <Button variant="outline-primary">Download</Button>{' '}
     </div>
   );
