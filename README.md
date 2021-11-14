@@ -42,7 +42,7 @@
 
 ## Future Improvements
 - May be deployed online through heroku (or any other deployment method)
-- File upload can be handled through online cloud storage (eq: AWS S3, Azure Blob, etc)
+- File upload can be handled through online cloud storage (eg: AWS S3, Azure Blob, Google Cloud Storage etc)
 
 ## Contributors
 - [Nadia Mareta Putri Leiden | 13520007 | K01](https://github.com/KorbanFidas2A)
