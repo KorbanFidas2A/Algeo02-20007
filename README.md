@@ -29,12 +29,15 @@
 - screenshot web
 
 ## Setup
-- `numpy`
+- Install Flask
+- Install Pillow
+- Install Numpy
+- Use Virtual Environment
 
 ## Usage
-1. Clone this project
-2. Run `index.html` on your localhost
-3. Try to compress some images
+1. Clone this repository
+2. Install Flask, Pillow and Numpy Library using pip install
+3. Type Flask Run
 
 ## Future Improvements
 - 
