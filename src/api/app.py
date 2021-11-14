@@ -13,7 +13,7 @@ import time
  
 app = Flask(__name__)
  
-UPLOAD_FOLDER = 'D:/road/to/api/uploads'
+UPLOAD_FOLDER = 'D:/algeodum/api/uploads'
  
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -181,6 +181,10 @@ def upload_image():
     if file and allowed_file(file.filename):
 
         # pemrosesan file dilakukan disini
+        
+        #penghitungan waktu
+        starttime =  time.time()
+
         #file extension
         if(file.filename.rsplit('.', 1)[1].lower() == 'jpg'):
             file = imgcompres(file.filename, constant)
@@ -192,6 +196,9 @@ def upload_image():
             file = imgcompres(file.filename, constant)
             filename = "result.jpeg"
 
+        end = time.time()
+
+        flash(f"Image compression time is {end - starttime} s")
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         flash('Foto Anda telah berhasil di upload')
         return redirect(url_for('download_file', name=filename))
