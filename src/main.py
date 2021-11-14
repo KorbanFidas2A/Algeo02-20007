@@ -3,8 +3,10 @@ import numpy as np
 from numpy.linalg import norm
 from math import sqrt
 from random import normalvariate
+import time
 
-
+#Mencari SVD dengan power iteration
+#helper function untuk iterasi
 def randomUnitVector(n):
     unnormalized = [normalvariate(0, 1) for _ in range(n)]
     theNorm = sqrt(sum(x * x for x in unnormalized))
@@ -23,6 +25,8 @@ def svd_1D(A, epsilon=1e-10):
         B = np.dot(A, A.T)
 
     iterations = 0
+    #lakukan iterasi sampai dengan nilai vektor hasil iterasi terakhir - iterasi sebelumnya 
+    # mencapai epsilon (sudah konvergen ke suatu nilai, i.e  eigenvektor terbesar)
     while True:
         iterations += 1
         lastV = currentV
@@ -64,6 +68,7 @@ def svd(A, k=None, epsilon=1e-10):
 
 
 def randomSVD(X,r,q,p):
+    #FASE 1: dekomposisi matrix X dengan cara sampling kolom X dengan random oleh matrix P
     ny = X.shape[1]
     P = np.random.randn(ny,r+p)
     Z = X @ P
@@ -71,15 +76,15 @@ def randomSVD(X,r,q,p):
         Z = X @ (X.T @ Z)
 
     Q, R = np.linalg.qr(Z,mode='reduced')
-
+    #FASE 2: Menghitung SVD dari matrix Y
     Y = Q.T @ X
     UY, S, VT = svd(Y)
     U = Q @ UY
 
     return U, S, VT
 
-
-img = np.asarray(Image.open(r'jupiter.jpg'))
+#NAD KALO MAU GANTI PATH IMPORT DISINI YA
+img = np.asarray(Image.open('copyjupiter.jpg'))
 k = int(input("compression percentage: "))
 m = img.shape[0]
 n = img.shape[1]
@@ -90,16 +95,24 @@ g = img[:,:,1]
 b = img[:,:,2]
 
 print("compressing...")
+starttime =  time.time()
     
 q = 1
 p = 5
+
+# singular values yang digunakan sesuai persentase yang diinginkan
+
+k = 100 - k
+# k = round((k*m*n)/(100*(m+1+n)))
+# print(k)
+k = round((k*m*n)/(100*(m+1+n)))
 
 Ur, Sr, VTr = randomSVD(r,k,q,p)
 Ug, Sg, VTg = randomSVD(g,k,q,p)
 Ub, Sb, VTb = randomSVD(b,k,q,p)
 
-# singular values yang digunakan sesuai persentase yang diinginkan
-k = round((k*m*n)/(100*(m+1+n)))
+
+
 
 # menggabungkan tiap komponen svd sebanyak k kolom/baris
 rr = np.dot(Ur[:,:k],np.dot(np.diag(Sr[:k]), VTr[:k,:]))
@@ -128,4 +141,10 @@ for ind1, row in enumerate(rimg):
 # konversi gambar & save file
 compressed_image = rimg.astype(np.uint8)
 compressed_image = Image.fromarray(compressed_image)
-compressed_image.save("../test/anotherxxx.jpg")
+#NAD KALO MAU GANTI PATH SAVE DISINI YA
+compressed_image.save("notherxxx.jpg")
+
+end = time.time()
+
+# total time taken
+print(f"Runtime of the program is {end - starttime}")
