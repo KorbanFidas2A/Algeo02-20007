@@ -27,7 +27,8 @@
     - Upload & download image
 
 ## Screenshots
-- screenshot web
+- Web Screenshots
+- Image compression results
 
 ## Setup
 - Install Flask
