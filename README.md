@@ -41,7 +41,7 @@
 3. Type Flask Run
 
 ## Future Improvements
-- 
+- Not yet
 
 ## Contributors
 - [Nadia Mareta Putri Leiden | 13520007 | K01](https://github.com/KorbanFidas2A)
