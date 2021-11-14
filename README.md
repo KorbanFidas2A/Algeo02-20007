@@ -16,6 +16,7 @@
 
 ## General Information
 - A website to compress image using the concept of Singular Value Decomposition (SVD).
+- A website using flask both for frontend and backend uses
 
 ## Technologies Used
 - Python
