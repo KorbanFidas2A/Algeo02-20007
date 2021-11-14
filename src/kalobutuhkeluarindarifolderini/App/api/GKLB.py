@@ -24,7 +24,8 @@ def rSVD(X,r,q,p):
 
     # Step 2: Compute SVD on projected Y = Q.T @ X
     Y = Q.T @ X
-    UY, S, VT = np.linalg.svd(Y)
+    #UY, S, VT = np.linalg.svd(Y)
+    UY, S, VT = svd(Y)
     U = Q @ UY
 
     return U, S, VT
@@ -621,7 +622,7 @@ def givens_push(U, B, p, q):
     return U, B
 
 
-def svd(A):
+def svdF(A):
     m, n = A.shape
     epsilon = 1e-3
     U, B, V = householder_reduction(A)
@@ -657,24 +658,299 @@ def svd(A):
             B[i, i] *= -1
     return U, B, V
 
+
+
+#calc eigen vals & vect by using qr method
+def qrmethod(m):
+    x = m
+    y = np.eye(m.shape[0])
+    for i in range(360):
+        q, r = np.linalg.qr(x)
+        y = np.dot(y, q)
+        x = np.dot(r, q)
+    return np.diag(x), y
+
+#calc right singular vect(MtM)
+def findRightSing(m):
+    return np.dot(m.transpose(), m)
+
+#get sigma
+def getSigma(n,mat,val):
+    for i in range(n):
+        mat[i] = np.sqrt(abs(val[i]))
+#get U
+def getU(u,n,val):
+    for i in range (n):
+        u[:,i] = u[:,i]/np.sqrt(np.abs(val[i]))
+
+#decompose m -> U sigma Vt
+def svdmethod(m):
+    #init
+    V = findRightSing(m)
+    eigVal, eigVec = qrmethod(V)
+
+    #sort eigen vals & vec
+    idx = eigVal.argsort()[::-1]
+    eigVal = eigVal[idx]
+    eigVec = eigVec[:,idx]
+    eigVal = eigVal[eigVal != 0.0] #discard 0
+    k = len(eigVal)
+
+    #init U, sigma, Vt
+    U = np.dot(m,eigVec[:,:k])
+    sigma = np.zeros(k)
+    Vt = eigVec.transpose()
+
+    #get U, sigma
+    getSigma(k,sigma,eigVal)
+    getU(U,k,eigVal)
+    return U, sigma, Vt
+
+
+EPS = 1e-10 # Maximum precision of the calculation
+TOL = 1e-15 # Maximum precision of the machine
+MAX_ITERATION = 100 # Maximum number of iterations in SVD algorithm
+
+def get_sign(x):
+    '''returns sign of x'''
+    if x >= 0:
+        return 1
+    return -1
+
+def householder_qr(A):
+    '''returns QR factorization of A as (Q, R)'''
+    (nrow, ncol) = np.shape(A)
+    Q = np.identity(nrow, dtype=np.float64)
+    R = np.copy(A)
+    for row in range(nrow):
+        x = R[row:nrow, row]
+        
+        # y is the desired reflection of x
+        y = np.zeros_like(x, dtype=float)
+        y[0] = -get_sign(x[0]) * np.linalg.norm(x)
+        
+        # u is the householder vector for desired reflection transform
+        u = np.zeros(nrow)
+        u[row:nrow] = y - x
+        u = u / np.linalg.norm(u)
+        
+        H = np.identity(nrow, dtype=np.float64) - 2*np.outer(u, u)
+        Q = Q @ H
+        R = H @ R
+    return (Q, R)
+
+def householder_bidiagonalization(A):
+    '''returns Bidiagnoliziation of A as (U,A,V*)'''
+    # For now, I assume ncol <= nrow
+    
+    (nrow, ncol) = np.shape(A)
+    U = np.identity(nrow, dtype=np.float64)
+    V = np.identity(ncol, dtype=np.float64)
+    R = np.copy(A)
+    
+    col = 0
+    for row in range(nrow):
+        x = R[row:nrow, row]
+        
+        # y is the desired reflection of x
+        y = np.zeros_like(x, dtype=float)
+        y[0] = -get_sign(x[0]) * np.linalg.norm(x)
+
+        # u is the householder vector for desired reflection transform
+        u = np.zeros(nrow)
+        u[row:nrow] = y - x
+        u = u / np.linalg.norm(u)
+        
+        H = np.identity(nrow, dtype=np.float64) - 2*np.outer(u, u)
+        U = U @ H
+        R = H @ R
+        
+        if row+1 < ncol:
+            x = R[row, row+1:ncol]
+
+            # y is the desired reflection of x
+            y = np.zeros_like(x, dtype=float)
+            y[0] = -get_sign(x[0]) * np.linalg.norm(x)
+
+            # u is the householder vector for desired reflection transform
+            u = np.zeros(ncol)
+            u[row+1:ncol] = y - x
+            u = u / np.linalg.norm(u)
+
+            H = np.identity(nrow, dtype=np.float64) - 2*np.outer(u, u)
+
+            V = H @ V
+            R = R @ H
+    
+    for row in range(nrow):
+        for col in range(ncol):
+            if abs(R[row, col]) < EPS: R[row, col] = 0.0
+                
+    return (U, R, V)
+
+
+def blocking(B):
+    ''' B must be a square upper bidiagonal matrix'''
+    n = len(B)
+
+    # identify size of larget diagonal sub matrix 
+    q = 0
+    if abs(B[n-2, n-1]) < EPS:
+        q = 1
+    while q > 0 and q < n:
+        if n-q-2>=0 and abs(B[n-q-2, n-q-1]) > EPS: 
+            break
+        q = q + 1
+
+    # identify larget submatrix with non-zero superdiagonal entries.
+    p = n - q
+    while p > 0:
+        if p-2>=0 and abs(B[p-2, p-1]) < EPS:
+            p = p - 1
+            break;
+        p = p-1
+
+    B_1 = B[0:p, 0:p]
+    B_2 = B[p:n-q, p:n-q]
+    B_3 = B[n-q:, n-q:]
+    return (B_1, B_2, B_3)
+
+
+def wilkinson_2by2(C):
+    '''Extract an approximate Wilkinson shift for 2 by 2 matrix C'''
+
+    delta = (C[0,0]+C[1,1])**2 - 4*(C[0,0]*C[1,1]-C[0,1]*C[1,0])
+    if delta > 0:
+        lambda_1 = ((C[0,0]+C[1,1]) + math.sqrt(delta))/2
+        lambda_2 = ((C[0,0]+C[1,1]) - math.sqrt(delta))/2
+        if abs(lambda_1 - C[1,1]) < abs(lambda_2 - C[1,1]):
+            return lambda_1
+        return lambda_2
+    return C[1,1]
+
+
+def givens(i, j, _n, x, y):
+    ''' 
+        Returns a Givens rotation matrix with size n 
+        The rotation zero out j-th row for a column c that c[i] = x, c[j] = y
+    '''
+    G = np.identity(_n, dtype=np.float64)
+    norm = math.sqrt(x**2 + y**2)
+    c = x / norm
+    s = y / norm
+    G[i, i], G[i, j], G[j, i], G[j, j] = c, s, -s, c
+
+    return G
+    
+    
+def svd(A):
+    ''' For now I assume that A is a square matrix'''
+    (nrow, ncol) = np.shape(A)
+    (U, B, V) = householder_bidiagonalization(A)
+    n = len(B)
+
+    for iteration in range(MAX_ITERATION):
+        # Zero out small superdiagonal entries
+        for i in range(n-1):
+            if abs(B[i, i+1]) < EPS*(abs(B[i, i])+abs(B[i+1, i+1])):
+                B[i, i+1] = 0.0
+        
+        # Zero out small entries
+        for i in range(n):
+            for j in range(n):
+                if abs(B[i, j]) < TOL:
+                    B[i, j] = 0.0
+      
+        # Split B into blocks
+        (B_1, B_2, B_3) = blocking(B)
+        
+        # We have found the decomposition!
+        if len(B_3) == n:
+            return (U, B, V)
+        
+        zero_diagonal_entry = False
+        for i in range(len(B_2)-1):
+            if B_2[i, i] == 0:
+                ''' We use Givens rotations to zero out the upperdiagonal entry in i-th row'''
+                U_2 = np.identity(len(B_2), dtype=np.float64)
+                for j in range(i, len(B_2)-1):
+                    G = givens(j+1, j, n, B[i+1, i+1], B_2[i, i+1])
+                    B_2 = G @ B_2
+                    U_2 = U_2 @ G.T
+
+                U[len(B_1):len(B_1)+len(B_2), len(B_1):len(B_1)+len(B_2)] = \
+                                U[len(B_1):len(B_1)+len(B_2), len(B_1):len(B_1)+len(B_2)] @ U_2
+                zero_diagonal_entry = True
+                break
+        
+        if not zero_diagonal_entry:
+            ''' If we reach here, we are sure that B_2 has no zero diagonal or superdiagonal entry'''
+            n_2 = len(B_2)
+            
+            U_2 = np.identity(n_2, dtype=np.float64)
+            V_2 = np.identity(n_2, dtype=np.float64)
+            
+            mu = wilkinson_2by2(B_2[n_2-2:, n_2-2:].T @ B_2[n_2-2:, n_2-2:])
+
+            y = B_2[0,0]**2 - mu
+            z = B_2[0,0]*B_2[0, 1]
+            for i in range(0, n_2-1):
+                G = givens(i, i+1, n_2, y, z)
+
+                B_2 = B_2 @ G.T
+                V_2 = G @ V_2
+                
+                y, z = B_2[i,i], B_2[i+1, i]
+                G = givens(i, i+1, n_2, y, z)
+                B_2 = G @ B_2
+                U_2 = U_2 @ G.T
+                        
+                if i < n_2-2:
+                    y, z = B_2[i,i+1], B_2[i,i+2]
+            
+        B[len(B_1):len(B_1)+len(B_2), len(B_1):len(B_1)+len(B_2)] = B_2
+        U_2_extended = np.identity(n)
+        V_2_extended = np.identity(n)
+        U_2_extended[len(B_1):len(B_1)+len(B_2), len(B_1):len(B_1)+len(B_2)] = U_2
+        V_2_extended[len(B_1):len(B_1)+len(B_2), len(B_1):len(B_1)+len(B_2)] = V_2
+        
+        U = U@U_2_extended
+        V = V_2_extended@V
+        # END OF ITERATION
+            
+    return (U, B, V)
+
 img = np.asarray(Image.open(r'jupiter.jpg'))
 k = int(input("compression percentage: "))
 
 r = img[:,:,0]  # array for R
 g = img[:,:,1]  # array for G
 b = img[:,:,2] # array for B
-    
+
+
+
 print("compressing...")
     
     # Calculating the svd components for all three arrays
 #ur,sr,vr = svd(r)
 #ug,sg,vg = svd(g)
 #ub,sb,vb = svd(b)
-ur,sr,vr = np.linalg.svd(r, full_matrices=False)
-ug,sg,vg = np.linalg.svd(g, full_matrices=False)
-ub,sb,vb = np.linalg.svd(b, full_matrices=False)
+# ur,sr,vr = np.linalg.svd(r, full_matrices=False)
+# ug,sg,vg = np.linalg.svd(g, full_matrices=False)
+# ub,sb,vb = np.linalg.svd(b, full_matrices=False)
 
-k = round((k/100) * sb.shape[0])
+# ur,sr,vr = svdNando(r)
+# ug,sg,vg = svdNando(g)
+# ub,sb,vb = svdNando(b)
+q = 1
+p = 5
+
+Ur, Sr, VTr = rSVD(r,k,q,p)
+Ug, Sg, VTg = rSVD(g,k,q,p)
+Ub, Sb, VTb = rSVD(b,k,q,p)
+# XrSVD = rU[:,:(r+1)] @ np.diag(rS[:(r+1)]) @ rVT[:(r+1),:]
+
+k = round((k/100) * Sb.shape[0])
 
     # Forming the compress image with reduced information
     # We are selecting only k singular values for each array to make image which will exclude some information from the 
@@ -685,9 +961,9 @@ k = round((k/100) * sb.shape[0])
 #rr = ur @ sr @ vr
 #rg = ug @ sg @ vg
 #rb = ub @ sb @ vb
-rr = np.dot(ur[:,:k],np.dot(np.diag(sr[:k]), vr[:k,:]))
-rg = np.dot(ug[:,:k],np.dot(np.diag(sg[:k]), vg[:k,:]))
-rb = np.dot(ub[:,:k],np.dot(np.diag(sb[:k]), vb[:k,:]))
+rr = np.dot(Ur[:,:k],np.dot(np.diag(Sr[:k]), VTr[:k,:]))
+rg = np.dot(Ug[:,:k],np.dot(np.diag(Sg[:k]), VTg[:k,:]))
+rb = np.dot(Ub[:,:k],np.dot(np.diag(Sb[:k]), VTb[:k,:]))
     
 print("arranging...")
     
@@ -718,7 +994,7 @@ compressed_image = rimg.astype(np.uint8)
     
     # Uncomment below code if you want to save your compressed image to the file
 compressed_image = Image.fromarray(compressed_image)
-compressed_image.save("another4.jpg")
+compressed_image.save("anotherx.jpg")
 #rU, rS, rVT = rSVD(X,r,q,p)
 
 # XSVD = U[:,:(r+1)] @ np.diag(S[:(r+1)]) @ VT[:(r+1),:] # SVD approximation

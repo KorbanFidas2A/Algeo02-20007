@@ -1,5 +1,4 @@
 import numpy as np
-import cv2
 from PIL import Image
 
 def eigenvalue(A, v):
@@ -62,9 +61,13 @@ def svd(A, k=None, epsilon=1e-10):
     return singular_values, us.T, vs
 
 
-img = Image.open("wkwkw.JPG")
-np_img = np.array(img)
-print(np_img.shape)
+img = np.asarray(Image.open(r'jupiter.jpg'))
+persen = int(input("compression percentage: "))
+m = img.shape[0]
+n = img.shape[1]
+k = round((persen*m*n)/(100*(m+1+n)))
+k = round((persen/100) * n)
+print(m, n, k)
 #s, u, v = svd(np_img)
 #u2, s2, v2 = np.linalg.svd(np_img, full_matrices=False)
 #print(u)
