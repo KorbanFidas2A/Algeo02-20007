@@ -149,7 +149,6 @@ def imgcompres(x, k):
     # konversi gambar & save file
     compressed_image = rimg.astype(np.uint8)
     compressed_image = Image.fromarray(compressed_image)
-    #NAD KALO MAU GANTI PATH SAVE DISINI YA
 
     end = time.time()
 
