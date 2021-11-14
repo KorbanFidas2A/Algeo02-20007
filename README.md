@@ -41,7 +41,8 @@
 3. Type Flask Run
 
 ## Future Improvements
-- Not yet
+- May be deployed online through heroku (or any other deployment method)
+- File upload can be handled through online cloud storage (eq: AWS S3 etc)
 
 ## Contributors
 - [Nadia Mareta Putri Leiden | 13520007 | K01](https://github.com/KorbanFidas2A)
