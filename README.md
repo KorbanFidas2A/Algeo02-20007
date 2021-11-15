@@ -41,7 +41,7 @@ A website using flask and python to compress image with the concept of Singular 
 ## Usage
 1. Clone this repository
 2. Install Flask, Pillow and Numpy Library using pip install
-3. Type Flask Run
+3. Change directory to `src/api` and type Flask Run
 
 ## Future Improvements
 - Compression output format could be the same as initial
