@@ -13,6 +13,7 @@ import time
  
 app = Flask(__name__)
  
+#diganti ke path di directory masing-masing
 UPLOAD_FOLDER = 'D:/path/to/api/uploads'
  
 app.secret_key = "secret key"
