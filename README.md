@@ -7,7 +7,7 @@
 * [General Information](#general-information)
 * [Technologies Used](#technologies-used)
 * [Features](#features)
-* [Screenshots](#screenshots)
+* [Interface](#interface)
 * [Setup](#setup)
 * [Usage](#usage)
 * [Future Improvements](#future-improvements)
@@ -15,20 +15,22 @@
 
 
 ## General Information
-- A website to compress image using the concept of Singular Value Decomposition (SVD).
-- A website using flask both for frontend and backend uses
+A website using flask and python to compress image with the concept of Singular Value Decomposition (SVD).
 
 ## Technologies Used
 - Python
+- Flask
 
 ## Features
 - Image Compression:
     - Percentage of compression
     - Upload & download image
 
-## Screenshots
-- Web Screenshots
-- Image compression results
+## Interface
+- Before Compression
+![Before Compression](https://github.com/KorbanFidas2A/Algeo02-20007/blob/program-fix/test/tampilan%20web.PNG)
+- After Compression
+![After Compression](https://github.com/KorbanFidas2A/Algeo02-20007/blob/program-fix/test/tampilan%20web%20%2B%20setelah%20berhasil%20compress.PNG)
 
 ## Setup
 - Install Flask
@@ -42,6 +44,7 @@
 3. Type Flask Run
 
 ## Future Improvements
+- Compression output format could be the same as initial
 - May be deployed online through heroku (or any other deployment method)
 - File upload can be handled through online cloud storage (eg: AWS S3, Azure Blob, Google Cloud Storage etc)
 
