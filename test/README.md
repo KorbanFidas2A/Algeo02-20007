@@ -1,1 +1,0 @@
-# Folder ini nanti diisi sama screenshot tampilan web dan hasil testing
