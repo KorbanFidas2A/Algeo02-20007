@@ -13,7 +13,7 @@ import time
  
 app = Flask(__name__)
  
-UPLOAD_FOLDER = 'D:/algeodum/api/uploads'
+UPLOAD_FOLDER = 'D:/path/to/api/uploads'
  
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
