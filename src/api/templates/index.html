@@ -23,16 +23,11 @@
         {% endwith %}
     </p>
     <br>
-    {% if filename %}
-        <div>
-            <img src="{{ url_for('display_image', filename=filename) }}">
-        </div>
-    {% endif %}
     <form method="post" action="/" enctype="multipart/form-data">
         <dl>
             <p>
                 <label for="const">Masukkan konstanta:</label>
-                <input type="number" id="const" name="cons" min="0" max="100">
+                <input type="number" id="const" name="cons" min="0" max = "100">
                 <br>
                 <input type="file" name="file" class="form-control" autocomplete="off" required>
             </p>
